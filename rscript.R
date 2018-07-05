@@ -74,6 +74,13 @@
   }
 
 #loading Data
+  
+  frame1 <- read.csv(file = "DataSet1.csv", header = FALSE)
+  frame2 <- read.csv(file = "DataSet2.csv", header = FALSE)
+  vec1 <- frame1[, 1]
+  vec2 <- frame2[, 1]
+  
+  
   loadData <- function(button)
   {
     frame1 <- read.csv(file.choose(), header = FALSE)
