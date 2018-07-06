@@ -59,17 +59,20 @@
   plot_ks <- function(arg1, arg2, one_sample = TRUE) {
     first_cdf = ecdf(arg1)
     second_cdf = NULL
+    plot_title = NULL
     if (one_sample) {
       second_cdf = arg2
+      plot_title <- "KS Test (One-Smaple)"
     } else {
       second_cdf = ecdf(arg2)
+      plot_title <- "KS Test (Two-Sample)"
     }
     frame1 <- data.frame(arg1)
     maxInd <- which.max(abs(first_cdf(arg1) - second_cdf(arg1)))
     maxDiffAt <- arg1[maxInd]
     print(
       ggplot(frame1, aes(x = arg1)) + stat_ecdf() + stat_function(fun = second_cdf, color = "red") +
-      geom_vline(xintercept = maxDiffAt, color = "blue")
+      geom_vline(xintercept = maxDiffAt, color = "blue") + labs(title = plot_title, x = "x", y = "F(x)")
     )
   }
 
@@ -132,8 +135,8 @@
   section4_function <- function(button){
     print(t.test(vec1, vec2))
     #checking whether vec1 and vec2 are normal distributions with same variance
-    ks.test(vec1, "pnorm", mean = mean(vec1), sd = sd(vec1))
-    ks.test(vec2, "pnorm", mean = mean(vec2), sd = sd(vec2)) 
+    print(shapiro.test(vec1))
+    print(shapiro.test(vec2))
     #if at least one of the sets fails to be normal (has p-value less than 1%)
     #or they have large enough difference in variance then ttest can't be trusted here
     helpFrame <- data.frame(vec1)
@@ -141,8 +144,10 @@
     mean1 = mean(vec1)
     mean2 = mean(vec2)
     print(
-      ggplot(helpFrame, aes(x = vec1)) + stat_ecdf() + stat_function(fun = second_func) +
-      geom_point(aes(mean1, ecdf(vec1)(mean1), color = "red")) + geom_point(aes(mean2, second_func(mean2), color = "red"))
+      ggplot(helpFrame, aes(x = vec1)) + stat_ecdf() + stat_function(fun = second_func, color = "red") +
+      geom_point(aes(x = mean1, y = ecdf(vec1)(mean1)), color = "blue") + 
+        geom_point(aes(mean2, second_func(mean2)), color = "blue") +
+        labs(title = "T Test", x = "x", y = "F(x)", caption = "Blue dots indicate mean")
     )
   }
   
